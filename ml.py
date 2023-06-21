@@ -161,7 +161,7 @@ with st.container():
         </h3>""", unsafe_allow_html=True)
     
     if selected =="Dataset" :
-
+        st.write("Dataset yang digunakan adalah data breast cancer yang ada didalam library scikit-learn. Dataset ini digunakan untuk klasifikasi kanker payudara. Dataset ini memiliki jumlah data sebanyak 569 data. Selain itu dataset ini memiliki 30 fitur dan 2 kelas. Kelasnya yaitu malignant (0) dan benign(1).")
         from sklearn.datasets import load_breast_cancer
         # Memuat dataset breast cancer
         data = load_breast_cancer()
