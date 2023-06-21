@@ -212,5 +212,5 @@ with st.container():
                 st.subheader('Hasil Prediksi')
             # Menampilkan hasil prediksi
                 
-                st.success(input_pred[0])
+                st.success(input_pred)
                 st.write("Accuracy:", accuracy)
