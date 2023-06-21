@@ -102,22 +102,25 @@ class AdaBoostClassifier:
         # Melakukan prediksi dari setiap classifier
         for i in range(len(self.clfs)):
             clf = self.clfs[i]
-            for j in range(m):
-                predictions[j, i] = clf.predict([X[j]])
-        print(predictions)
+            predictions[:, i] = clf.predict(X)  # Menggunakan clf.predict langsung pada seluruh data X
 
         final_predictions = np.zeros(m)  # Array untuk menyimpan prediksi akhir
 
         for i in range(m):  # Iterasi melalui setiap data
-            pred_weights = np.zeros(len(self.clfs_weights))  # Array untuk menyimpan bobot prediktor dengan hasil prediksi yang sama
-            for j in range(len(self.clfs_weights)):  # Iterasi melalui setiap prediktor
+            pred_weights = np.zeros(len(self.clfs))  # Array untuk menyimpan bobot prediktor dengan hasil prediksi yang sama
+            unique_predictions = np.unique(predictions[i])
+            for j in range(len(self.clfs)):  # Iterasi melalui setiap prediktor
                 clf_weight = self.clfs_weights[j]
-                if np.array_equal(predictions[i], predictions[i, j]):# Membandingkan semua elemen menggunakan np.array_equal
-                    pred_weights[j] = clf_weight
+                pred = predictions[i, j]
+                pred_idx = np.where(unique_predictions == pred)[0][0]
+                pred_weights[j] += clf_weight if unique_predictions[pred_idx] == pred else 0
 
             max_weight_idx = np.argmax(pred_weights)
             final_predictions[i] = predictions[i, max_weight_idx]  # Memilih hasil prediksi dengan bobot prediktor terbesar
 
+        print("Predictions:")
+        print(predictions)
+        print("Final Predictions:")
         print(final_predictions)
 
         return final_predictions
