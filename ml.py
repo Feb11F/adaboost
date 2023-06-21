@@ -162,6 +162,7 @@ with st.container():
     
     if selected =="Dataset" :
         st.write("Dataset yang digunakan adalah data breast cancer yang ada didalam library scikit-learn. Dataset ini digunakan untuk klasifikasi kanker payudara. Dataset ini memiliki jumlah data sebanyak 569 data. Selain itu dataset ini memiliki 30 fitur dan 2 kelas. Kelasnya yaitu malignant (0) dan benign(1).")
+        st.write('Pada klasifikasi yang kami lakukan menggunakan 10 fitur pertama pada dataset sebagai berikut  :')
         st.write("#### Mean radius ")
         st.write("#### Mean texture ")
         st.write("#### Mean perimeter ")
