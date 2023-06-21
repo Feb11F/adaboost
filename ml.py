@@ -9,74 +9,119 @@ import pandas as pd
 import warnings
 warnings.filterwarnings('ignore')
 class AdaBoostClassifier:
-    def __init__(self, n_estimators=50, learning_rate=0.1):
+    def __init__(self, n_estimators, learning_rate=0.1):
         self.n_estimators = n_estimators
         self.learning_rate = learning_rate
         self.clfs = []
         self.clfs_weights = []
+        self.bobot_awal = []
+        self.bobot_data_baru = []
 
-    def calc_weighted_error(self, y_true, y_pred):
-        return np.sum(y_true != y_pred) / len(y_pred)
+    def inisialisasi_bobot(self,X):
+        weights = np.full(len(X), 1 / len(X))
+        self.bobot_awal.append(weights)
+        return weights
 
-    def calc_error(self, y_true, y_pred):
-        res = np.array([y_true != y_pred])
-        res = res.astype(int)
-        return res
+    def calc_weight_error(self,y,y_pred):
+       return np.sum(y != y_pred)/len(y_pred)
 
-    def update_weights(self, weights, pred_weight, error):
-        new_weights = weights * (np.exp(pred_weight * error))
+    def  calc_error(self, y, y_pred) :
+        #1 ketika y != pred
+        err = np.array([y != y_pred])
+        err = err.astype(int)
+        return err
+
+    def update_weight_error(self, weights, pred_weight, error):
+        new_weights = weights * (e**(pred_weight * error))
         new_weights = new_weights / np.sum(new_weights)
         return new_weights
 
-    def calc_pred_weight(self, learning_rate, weighted_error):
+    def pred_weight(self, learning_rate, weighted_error):
         EPS = 1e-10
-        return learning_rate * np.log((1 - weighted_error + EPS) / (weighted_error + EPS))
+        bobot = learning_rate * np.log((1 - weighted_error + EPS) / (weighted_error + EPS))
+        return bobot
+
+    def select_data_indices(self,weights):
+        flattened_weights = np.ravel(weights)  # Meratakan array bobot
+
+        # Memilih data dengan probabilitas berdasarkan bobot
+        data_indices = np.random.choice(len(flattened_weights), size=len(flattened_weights), replace=True, p=flattened_weights)
+
+        return data_indices
 
     def fit(self, X, y):
-        m, n = X.shape
-        weights = np.full(len(X), 1 / len(X))
-
+        weights = self.inisialisasi_bobot(X)
+        # print("ini bobot data awal",weights)
+        # print("target asli",y)
         for i in range(self.n_estimators):
             clf = DecisionTreeClassifier(max_depth=2)
             clf.fit(X, y)
             self.clfs.append(clf)
 
-            y_pred = clf.predict(X)
-            weighted_error = self.calc_weighted_error(y, y_pred)
-            pred_weight = self.calc_pred_weight(self.learning_rate, weighted_error)
-            self.clfs_weights.append(pred_weight)
+            # y_pred = clf.predict(X)
+            y_pred = [1, 1, 0, 0, 0, 1, 0, 1, 1, 0]
+            print("ini prediksi",y_pred)
+
+            rj = self.calc_weight_error(y, y_pred)
+            # print("weight error",rj)
+
+            alpha_j = self.pred_weight(self.learning_rate,rj)
+            self.clfs_weights.append(alpha_j)
+
+            # print("ini bobot predictor",self.clfs_weights)
 
             error = self.calc_error(y, y_pred)
-            weights = self.update_weights(weights, pred_weight, error)
 
-            new_indices = np.random.choice(m, m, p=weights.ravel())
+            print("ini error nya",error)
+
+            update_bobot_data = self.update_weight_error(weights, alpha_j, error)
+            self.bobot_data_baru.append(update_bobot_data)
+
+            print("ini bobot data baru",update_bobot_data)
+
+            new_indices = self.select_data_indices(update_bobot_data)
+            print("new_indices",new_indices)
+
+            # X =[X[index] for index in new_indices]
+            # y =[y[index] for index in new_indices]
+
             X = X[new_indices]
             y = y[new_indices]
 
+            print(X)
+            print(y)
+
         # Normalisasi clfs_weights
         self.clfs_weights = self.clfs_weights / np.sum(self.clfs_weights)
+        return self.clfs, self.clfs_weights
 
-    def predict(self,X):
-      n_estimators = len(self.clfs)
-      y_pred = np.zeros(len(X))
-      pred_weights = np.zeros(len(X))
+    def predict(self, X):
+        m = X.shape[0]  # Jumlah data dalam X
+        predictions = np.zeros((m, len(self.clfs)))  # Array untuk menyimpan prediksi dari setiap classifier
 
-      for i in range(n_estimators):
-          clf = self.clfs[i]
-          pred_weight = self.clfs_weights[i]
-          pred = clf.predict(X)
+        # Melakukan prediksi dari setiap classifier
+        for i in range(len(self.clfs)):
+            clf = self.clfs[i]
+            for j in range(m):
+                predictions[j, i] = clf.predict([X[j]])
+        print(predictions)
 
-          # Menambahkan bobot prediksi pada posisi yang sesuai
-          y_pred += pred_weight * pred
-          pred_weights[pred == 1] += pred_weight
-          pred_weights[pred == 0] -= pred_weight
+        final_predictions = np.zeros(m)  # Array untuk menyimpan prediksi akhir
 
-      # Menentukan kelas prediksi berdasarkan jumlah bobot
-      y_pred = np.sign(y_pred)
-      y_pred[pred_weights >= 0] = 1
-      y_pred[pred_weights < 0] = 0
+        for i in range(m):  # Iterasi melalui setiap data
+            pred_weights = np.zeros(len(self.clfs_weights))  # Array untuk menyimpan bobot prediktor dengan hasil prediksi yang sama
+            for j in range(len(self.clfs_weights)):  # Iterasi melalui setiap prediktor
+                clf_weight = self.clfs_weights[j]
+                if np.array_equal(predictions[i], predictions[i, j]):# Membandingkan semua elemen menggunakan np.array_equal
+                    pred_weights[j] = clf_weight
 
-      return y_pred
+            max_weight_idx = np.argmax(pred_weights)
+            final_predictions[i] = predictions[i, max_weight_idx]  # Memilih hasil prediksi dengan bobot prediktor terbesar
+
+        print(final_predictions)
+
+        return final_predictions
+
 
 st.set_page_config(
     page_title="Implemntasi Adabooost",
