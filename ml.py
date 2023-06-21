@@ -162,6 +162,16 @@ with st.container():
     
     if selected =="Dataset" :
         st.write("Dataset yang digunakan adalah data breast cancer yang ada didalam library scikit-learn. Dataset ini digunakan untuk klasifikasi kanker payudara. Dataset ini memiliki jumlah data sebanyak 569 data. Selain itu dataset ini memiliki 30 fitur dan 2 kelas. Kelasnya yaitu malignant (0) dan benign(1).")
+        st.write("#### Mean radius ")
+        st.write("#### Mean texture ")
+        st.write("#### Mean perimeter ")
+        st.write("#### Mean area ")
+        st.write("#### Mean smoothness ")
+        st.write("#### Mean compactness ")
+        st.write("#### Mean concavity ")
+        st.write("#### Mean concave points")
+        st.write("#### Mean symmetry ")
+        st.write("####  Mean fractal dimension")
         from sklearn.datasets import load_breast_cancer
         # Memuat dataset breast cancer
         data = load_breast_cancer()
