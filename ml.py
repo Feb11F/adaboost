@@ -175,11 +175,13 @@ with st.container():
         breast_cancer = load_breast_cancer()
         X = breast_cancer.data
         y = breast_cancer.target
-
+        
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+        X_train = X_train[:,:10]
+
         # Create and train AdaBoostClassifier
-        adaboost = AdaBoostClassifier(n_estimators=5, learning_rate=0.1)
+        adaboost = AdaBoostClassifier(n_estimators=3, learning_rate=0.1)
         adaboost.fit(X_train, y_train)
 
         # adaboost.clfs_weights
