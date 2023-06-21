@@ -165,7 +165,8 @@ with st.container():
 
         # Membuat DataFrame dari data dan target
         df = pd.DataFrame(data.data, columns=data.feature_names)
-        st.write(df.head())                 
+        st.write(df.head())
+                         
     if selected == "Implementation":
         from sklearn.datasets import load_breast_cancer
         from sklearn.model_selection import train_test_split
@@ -175,19 +176,18 @@ with st.container():
         breast_cancer = load_breast_cancer()
         X = breast_cancer.data
         y = breast_cancer.target
-        
+
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-        X_train = X_train[:,:10]
+        X_train_subset = X_train[:,:10]
+        y_train_subset = y_train[:]
+
 
         # Create and train AdaBoostClassifier
-        adaboost = AdaBoostClassifier(n_estimators=3, learning_rate=0.1)
-        adaboost.fit(X_train, y_train)
+        adaboost = AdaBoostClassifier(n_estimators=5, learning_rate=0.1)
+        adaboost.fit(X_train_subset, y_train_subset)
 
-        # adaboost.clfs_weights
-        np.sum(adaboost.clfs_weights)
-        # Perform predictions on the test set
-        y_pred = adaboost.predict(X_test)
+        y_pred = adaboost.predict(X_test[:,:10])
 
         accuracy = accuracy_score(y_test, y_pred)
         print("Accuracy:", accuracy)
@@ -206,7 +206,7 @@ with st.container():
             mean_fratical_dimension = st.number_input('Masukkan Mean fractal dimension')
             submit = st.form_submit_button("submit")
             inputs = np.array([mean_radius,mean_tektstur,mean_perimeter,mean_area,mean_smoothness,mean_compactness,mean_compacity,mean_concapoints,mean_simmetry,mean_fratical_dimension])
-            input_norm = np.array(inputs).reshape(-1, 10)
+            input_norm = np.array(inputs).reshape(-1,10)
             input_pred = adaboost.predict(input_norm)
             if submit:
                 st.subheader('Hasil Prediksi')
@@ -214,9 +214,3 @@ with st.container():
                 
                 st.success(input_pred[0])
                 st.write("Accuracy:", accuracy)
-
-        
-          
-
-
-        
