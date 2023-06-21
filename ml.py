@@ -217,4 +217,4 @@ with st.container():
                 if input_pred=='0':
                     st.success('malignant')
                 else :
-                    st.success('hasil 1')
+                    st.success('benign')
