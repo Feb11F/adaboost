@@ -215,6 +215,6 @@ with st.container():
                 st.subheader('Hasil Prediksi')
             # Menampilkan hasil prediksi
                 if input_pred=='0':
-                    st.success('hasil 0')
+                    st.success('malignant')
                 else :
                     st.success('hasil 1')
