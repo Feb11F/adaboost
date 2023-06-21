@@ -214,6 +214,7 @@ with st.container():
             if submit:
                 st.subheader('Hasil Prediksi')
             # Menampilkan hasil prediksi
-                
-                st.success(input_pred)
-                st.write("Accuracy:", accuracy)
+                if input_pred=='0':
+                    st.success('hasil 0')
+                else :
+                    st.success('hasil 1')
