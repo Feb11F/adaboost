@@ -158,7 +158,7 @@ with st.container():
     if selected == "Home" :
         st.write("""<h3 style="text-align: center;">
         <img src="https://asset.kompas.com/crops/LlS_K6YXiqlztK08GKshvg_m15U=/152x0:997x563/750x500/data/photo/2022/05/24/628c83ebd499d.jpg" width="500" height="300">
-        </h3>""")
+        </h3>""",unsafe_allow_html=True)
     
     if selected =="Dataset" :
         st.write("Dataset yang digunakan adalah data breast cancer yang ada didalam library scikit-learn. Dataset ini digunakan untuk klasifikasi kanker payudara. Dataset ini memiliki jumlah data sebanyak 569 data. Selain itu dataset ini memiliki 30 fitur dan 2 kelas. Kelasnya yaitu malignant (0) dan benign(1).")
