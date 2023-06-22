@@ -229,10 +229,11 @@ with st.container():
             mean_simmetry = st.number_input('Masukkan Mean symmetry')
             mean_fratical_dimension = st.number_input('Masukkan Mean fractal dimension')
             submit = st.form_submit_button("submit")
-            inputs = np.array([mean_radius,mean_tektstur,mean_perimeter,mean_area,mean_smoothness,mean_compactness,mean_compacity,mean_concapoints,mean_simmetry,mean_fratical_dimension])
-            input_norm = np.array(inputs).reshape(-1,10)
-            input_pred = adaboost.predict(input_norm)
+
             if submit:
+                inputs = np.array([mean_radius,mean_tektstur,mean_perimeter,mean_area,mean_smoothness,mean_compactness,mean_compacity,mean_concapoints,mean_simmetry,mean_fratical_dimension])
+                input_norm = np.array(inputs).reshape(-1,10)
+                input_pred = adaboost.predict(input_norm)
                 st.subheader('Hasil Prediksi')
             # Menampilkan hasil prediksi
                 if input_pred=='0':
