@@ -58,8 +58,8 @@ class AdaBoostClassifier:
             clf.fit(X, y)
             self.clfs.append(clf)
 
-            #y_pred = clf.predict(X)
-            y_pred = [1, 1, 0, 0, 0, 1, 0, 1, 1, 0]
+            y_pred = clf.predict(X)
+            #y_pred = [1, 1, 0, 0, 0, 1, 0, 1, 1, 0]
             print("ini prediksi",y_pred)
 
             rj = self.calc_weight_error(y, y_pred)
